@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+from collections import deque as queue
 
 
-def get_probabilities(sheet_name):
-    df_dict = pd.read_excel('probabilities/1.xlsx', sheet_name=sheet_name, usecols='B:K', header=None, skiprows=1)
-    return df_dict.to_numpy()
+# def get_probabilities(sheet_name):
+#     df_dict = pd.read_excel('probabilities/1.xlsx', sheet_name=sheet_name, usecols='B:K', header=None, skiprows=1)
+#     return df_dict.to_numpy()
 
 
 def grid_to_float_convertor(grid, num_rows, num_cols):
@@ -39,4 +40,65 @@ def grid_to_float_convertor(grid, num_rows, num_cols):
     return np.array(grid, float)
 
 
+def calculate_diagonal_distance(x, y):
+    dx = abs(x[0] - x[1])
+    dy = abs(y[0] - y[1])
+    return 2 * min(dx, dy) + (max(dx, dy) - min(dx, dy))
 
+
+def create_grid(initial_grid, height, width):
+    grid = []
+    for i in range(height):
+        grid.append([])
+        for j in range(width):
+            grid[-1].append(0)
+            grid[i][j] = Node(i, j)
+            grid[i][j].type = initial_grid[i][j]
+    return grid
+
+
+class Node:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.type = ''
+
+
+class Coloring:
+    def __init__(self, initial_grid, height, width):
+        self.dRow = [0, 1, 1, 1, 0, -1, -1, -1]
+        self.dCol = [-1, -1, 0, 1, 1, 1, 0, -1]
+        self.vis = [[False for i in range(width)] for i in range(height)]
+        self.grid = create_grid(initial_grid, height, width)
+        self.height = height
+        self.width = width
+        self.available_cells = []
+
+    def is_valid(self, row, col):
+        if row < 0 or col < 0 or row >= self.height or col >= self.width:
+            return False
+        if self.vis[row][col]:
+            return False
+        return True
+
+    def bfs(self, row, col):
+        q = queue()
+        q.append((row, col))
+        self.vis[row][col] = True
+        while len(q) > 0:
+            cell = q.popleft()
+            x = cell[0]
+            y = cell[1]
+            self.available_cells.append(self.grid[x][y])
+            for i in range(8):
+                adj_x = x + self.dRow[i]
+                adj_y = y + self.dCol[i]
+                if self.is_valid(adj_x, adj_y) and not self.grid[adj_x][adj_y].type == "W":
+                    q.append((adj_x, adj_y))
+                    self.vis[adj_x][adj_y] = True
+
+    def contains(self, tup):
+        for cell in self.available_cells:
+            if cell.x == tup[0] and cell.y == tup[1]:
+                return True
+        return False

@@ -38,7 +38,14 @@ class ValueIteration:
             for a in range(self.num_actions):
                 if v_list[a] == max_val:
                     max_index.append(a)
-            pi[s] = np.random.choice(max_index)
+            if 8 in max_index:
+                pi[s] = 8
+            else:
+                lt4 = [item for item in max_index if item < 4]
+                if len(lt4) > 0:
+                    pi[s] = np.random.choice(lt4)
+                else:
+                    pi[s] = np.random.choice(max_index)
         return pi.astype(int)
 
     def train(self, tol=1e-3, plot=True):

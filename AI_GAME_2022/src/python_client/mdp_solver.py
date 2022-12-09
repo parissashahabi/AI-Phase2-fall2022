@@ -3,8 +3,10 @@ from value_iteration import ValueIteration
 
 
 class MDPSolver:
-    def __init__(self, grid, reward, count):
-        self.problem = MDP(grid, reward, count)
+    def __init__(self, grid, reward, count, normal_cells_probabilities, slider_cells_probabilities,
+                 barbed_cells_probabilities, teleport_cells_probabilities):
+        self.problem = MDP(grid, reward, count, normal_cells_probabilities, slider_cells_probabilities,
+                           barbed_cells_probabilities, teleport_cells_probabilities)
         self.solver = ValueIteration(self.problem.reward_function, self.problem.transition_model, gamma=0.9)
 
     def train(self):
@@ -14,7 +16,6 @@ class MDPSolver:
         self.problem.visualize_value_policy(policy=self.solver.policy, values=self.solver.values)
 
     def get_policy(self):
-        # print(self.solver.policy)
         return self.solver.policy
 
 

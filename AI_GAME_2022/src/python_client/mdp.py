@@ -2,12 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from time import time
-from utils import grid_to_float_convertor, get_probabilities
+from utils import grid_to_float_convertor
 import math
 
 
 class MDP:
-    def __init__(self, grid, reward, count, time_limit=1000):
+    def __init__(self, grid, reward, count, normal_cells_probabilities, slider_cells_probabilities,
+                 barbed_cells_probabilities, teleport_cells_probabilities, time_limit=1000):
         # file = open(filename)
         # self.map = (np.array(
         #     [list(map(str, s.strip())) for s in file.readlines()]
@@ -19,11 +20,11 @@ class MDP:
         self.num_cols = self.map.shape[1]
         self.map = grid_to_float_convertor(self.map, self.num_rows, self.num_cols)
         self.num_states = self.num_rows * self.num_cols
-        self.num_actions = 8
-        self.normal_cells_probabilities = get_probabilities('normal')
-        self.slider_cells_probabilities = get_probabilities('slider')
-        self.barbed_cells_probabilities = get_probabilities('barbed')
-        self.teleport_cells_probabilities = get_probabilities('teleport')
+        self.num_actions = 9
+        self.normal_cells_probabilities = normal_cells_probabilities
+        self.slider_cells_probabilities = slider_cells_probabilities
+        self.barbed_cells_probabilities = barbed_cells_probabilities
+        self.teleport_cells_probabilities = teleport_cells_probabilities
         self.reward = reward
         self.numeric_rewards = self.split_reward()[1]
         self.nan_rewards = self.split_reward()[0]
@@ -83,6 +84,8 @@ class MDP:
                             new_c = max(c - 1, 0)
                             if not(new_c == c - 1 and new_r == r + 1):
                                 new_r, new_c = r, c
+                        elif a == 8:  # NOOP
+                            new_r, new_c = r, c
                         if self.map[new_r, new_c] in self.nan_rewards:
                             new_r, new_c = r, c
                         s_prime = self.get_state_from_pos((new_r, new_c))
@@ -316,7 +319,7 @@ class MDP:
                 if policy is not None:
                     if self.map[i, j] == 0:
                         a = policy[s]
-                        symbol = ['^', 'v', '<', '>', 'o', 's', 'P', 'd']
+                        symbol = ['^', 'v', '<', '>', 'o', 's', 'P', 'd', '$N$']
                         ax.plot([x + 0.5 * unit], [y + 0.5 * unit], marker=symbol[a], alpha=0.4,
                                 linestyle='none', markersize=max(fig_size)*unit, color='#1f77b4')
 
