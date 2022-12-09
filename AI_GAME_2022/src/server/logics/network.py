@@ -35,4 +35,5 @@ class Socket:
         try:
             return self.read_utf().strip()
         except Exception as e:
+            print(e)
             return None
