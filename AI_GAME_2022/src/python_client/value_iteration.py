@@ -19,7 +19,12 @@ class ValueIteration:
             v_list = np.zeros(self.num_actions)
             for a in range(self.num_actions):
                 p = self.transition_model[s, a]
-                v_list[a] = self.reward_function[s] + self.gamma * np.sum(p * self.values)
+                if a in [0, 1, 2, 3]:
+                    v_list[a] = self.reward_function[s] + self.gamma * np.sum(p * self.values)
+                elif a in [4, 5, 6, 7]:
+                    v_list[a] = 2 * self.reward_function[s] + self.gamma * np.sum(p * self.values)
+                elif a == 8:
+                    v_list[a] = self.gamma * np.sum(p * self.values)
 
             self.values[s] = max(v_list)
             delta = max(delta, abs(temp - self.values[s]))
@@ -38,14 +43,15 @@ class ValueIteration:
             for a in range(self.num_actions):
                 if v_list[a] == max_val:
                     max_index.append(a)
-            if 8 in max_index:
-                pi[s] = 8
-            else:
-                lt4 = [item for item in max_index if item < 4]
-                if len(lt4) > 0:
-                    pi[s] = np.random.choice(lt4)
-                else:
-                    pi[s] = np.random.choice(max_index)
+            # if 8 in max_index:
+            #     pi[s] = 8
+            # else:
+            #     lt4 = [item for item in max_index if item < 4]
+            #     if len(lt4) > 0:
+            #         pi[s] = np.random.choice(lt4)
+            #     else:
+            #         pi[s] = np.random.choice(max_index)
+            pi[s] = np.random.choice(max_index)
         return pi.astype(int)
 
     def train(self, tol=1e-3, plot=True):
