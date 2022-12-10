@@ -141,7 +141,7 @@ class Agent(BaseAgent):
                 else:
                     self.update_reached_keys_list()
             print(f'-----------------turn count {self.turn_count}-----------------')
-            # print(f'factor: {((self.grid_height * self.grid_width) / self.max_turn_count) * self.find_longest_distance_between_gems()}')
+            print(f'factor: {((self.grid_height * self.grid_width) / self.max_turn_count) * self.find_longest_distance_between_gems()}')
             print(f'agent reached a gem: {self.agent in self.gems_locations}')
             self.find_sliders()
             print(f'gems location: {self.gems_locations}')

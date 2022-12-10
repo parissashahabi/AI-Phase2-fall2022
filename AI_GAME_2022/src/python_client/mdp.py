@@ -48,12 +48,16 @@ class MDP:
 
     def get_transition_model(self):
         transition_model = np.zeros((self.num_states, self.num_actions, self.num_states))
+        allowed_cells = [0, 12, 13]
+        for nr in self.numeric_rewards:
+            if nr in [6, 7, 8]:
+                allowed_cells.append(nr)
         for r in range(self.num_rows):
             for c in range(self.num_cols):
                 cell_type = self.map[r, c]
                 s = self.get_state_from_pos((r, c))
                 neighbor_s = np.zeros(self.num_actions)
-                if self.map[r, c] in self.numeric_rewards:
+                if self.map[r, c] in allowed_cells:
                     for a in range(self.num_actions):
                         new_r, new_c = r, c
                         if a == 0:  # Up
@@ -94,13 +98,13 @@ class MDP:
                     neighbor_s = np.ones(self.num_actions) * s
                 for a in range(self.num_actions):
                     for i, neighbor in enumerate(neighbor_s):
-                        if cell_type == 0:
+                        if cell_type in [0, 6, 7, 8]:
                             transition_model[s, a, int(neighbor)] += self.normal_cells_probabilities[a, i]
                         elif cell_type in [1, 2, 3, 4, 9, 10, 11]:
                             transition_model[s, a, int(neighbor)] += self.slider_cells_probabilities[a, i]
                         elif cell_type == 12:
                             transition_model[s, a, int(neighbor)] += self.barbed_cells_probabilities[a, i]
-                        else:
+                        elif cell_type == 13:
                             transition_model[s, a, int(neighbor)] += self.teleport_cells_probabilities[a, i]
         return transition_model
 

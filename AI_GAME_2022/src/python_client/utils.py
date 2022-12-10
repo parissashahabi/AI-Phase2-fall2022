@@ -37,12 +37,14 @@ def grid_to_float_convertor(grid, num_rows, num_cols):
                 grid[r, c] = 11
             elif grid[r, c] == '*':
                 grid[r, c] = 12
+            elif grid[r, c] == 'T':
+                grid[r, c] = 13
     return np.array(grid, float)
 
 
-def calculate_diagonal_distance(x, y):
-    dx = abs(x[0] - x[1])
-    dy = abs(y[0] - y[1])
+def calculate_diagonal_distance(source, destination):
+    dx = abs(source[0] - destination[0])
+    dy = abs(source[1] - destination[1])
     return 2 * min(dx, dy) + (max(dx, dy) - min(dx, dy))
 
 
