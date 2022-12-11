@@ -8,3 +8,4 @@ test.py
 server/outs.txt
 src/python_client/images
 src/server/game_logs
+src/server/config.json
