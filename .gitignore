@@ -6,3 +6,5 @@ __init__.py
 __pycache__
 test.py
 server/outs.txt
+src/python_client/images
+src/server/game_logs
